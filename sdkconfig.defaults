@@ -1,0 +1,23 @@
+# USB CDC class, used to receive the "DFU" trigger string over the
+# High-Speed USB-OTG port (USB-A on the Waveshare ESP32-P4-WIFI6-DEV-KIT).
+CONFIG_TINYUSB_CDC_ENABLED=y
+
+# ESP-IDF defaults to a secondary console over USB_SERIAL_JTAG (a `choice`,
+# see esp-idf/components/esp_stdio/Kconfig), which claims the native
+# USB_SERIAL_JTAG peripheral early at boot and makes the host see "Espressif
+# USB JTAG/serial debug unit" (303a:1001) instead of our TinyUSB CDC device
+# (303a:4001) -- confirmed by testing the OTG1.1 FS port. Select "No
+# secondary console" so TinyUSB has sole control of the USB PHY it needs.
+CONFIG_ESP_CONSOLE_SECONDARY_NONE=y
+
+# USB-Serial-JTAG module itself defaults to "on" independent of the console
+# setting above (esp-idf/components/esp_driver_usb_serial_jtag/Kconfig).
+# Turn it fully off too, since this app doesn't use it.
+CONFIG_USJ_ENABLE_USB_SERIAL_JTAG=n
+
+# The Waveshare ESP32-P4-WIFI6-DEV-KIT in hand is chip revision v1.0; the
+# default minimum chip revision for a fresh esp32p4 project is v3.1, and
+# selecting a rev <3.0 requires this gate option too (see
+# esp-idf/components/esp_hw_support/port/esp32p4/Kconfig.hw_support).
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+CONFIG_ESP32P4_REV_MIN_0=y
